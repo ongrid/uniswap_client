@@ -2,6 +2,7 @@ import os
 import json
 import time
 from web3 import Web3
+from progress.spinner import Spinner
 from web3.gas_strategies.time_based import fast_gas_price_strategy
 
 PRIV_KEY = os.getenv("PRIV_KEY")
@@ -148,16 +149,19 @@ class Pair:
         print(f"Gas price is {self.gas_price} wei or {self.gas_price / 1e9} Gwei")
 
     def wait_desired_conditions(self):
+        spinner = Spinner()
+        rcv_current = None
         while True:
-
+            prev_rcv = rcv_current
             rcv_current = self.router.functions.getAmountsOut(
                 amountIn=self.spend_amount, path=self.path
             ).call()[1]
-            print(
-                f"Expected: {self.rcv_amount} {self.rcv_token_symbol}, Current: {rcv_current}"
-            )
+            if rcv_current != prev_rcv:
+                print("")
+                spinner.message=f"Expected: {self.rcv_amount} {self.rcv_token_symbol}, Current: {rcv_current} "
+            spinner.next()
             if rcv_current >= self.rcv_amount:
-                print("Conditions are met!")
+                print("\nConditions are met!")
                 return True
             time.sleep(0.5)
 
