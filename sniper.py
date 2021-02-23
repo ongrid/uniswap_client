@@ -114,6 +114,7 @@ class Pair:
                 print(f"TX hash: {signed.hash.hex()}")
                 tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
                 tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+                break
             except Exception as exc:
                 print("Something went wrong")
                 print(exc)
