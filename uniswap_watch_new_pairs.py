@@ -8,13 +8,18 @@ from progress.spinner import Spinner
 parser = argparse.ArgumentParser(
     description="Find new Uniswap pairs"
 )
-parser.add_argument("lookback", nargs='?')
+parser.add_argument("--lookback")
+parser.add_argument("--whitelisted")
 args = parser.parse_args()
 if args.lookback:
     lookback = int(args.lookback)
 else:
     lookback = 0
 
+if args.whitelisted:
+    whitelisted = Web3.toChecksumAddress(args.whitelisted)
+else:
+    whitelisted = None
 
 WEB3_URL = os.getenv("WEB3_URL")
 UNI_ROUTER = os.getenv("UNI_ROUTER", "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
@@ -41,6 +46,9 @@ def show_pair(pair_id):
     pair = w3.eth.contract(abi=uniswap_pair_abi, address=pair_addr)
     token0_addr = Web3.toChecksumAddress(pair.functions.token0().call())
     token1_addr = Web3.toChecksumAddress(pair.functions.token1().call())
+    if whitelisted:
+        if whitelisted not in (token0_addr, token1_addr):
+            return
     token0 = w3.eth.contract(abi=erc20_abi, address=token0_addr)
     token1 = w3.eth.contract(abi=erc20_abi, address=token1_addr)
     token0_symbol = token0.functions.symbol().call()
@@ -48,18 +56,25 @@ def show_pair(pair_id):
     token0_decimals = int(token0.functions.decimals().call())
     token1_decimals = int(token1.functions.decimals().call())
     print(f"\nPair found:{pair_addr} ({token0_symbol} {token1_symbol})")
+    print(f"  Token0: {token0_addr} ({token0_symbol})")
+    print(f"  Token1: {token1_addr} ({token1_symbol})")
     print(
         f"  price 1 {token0_symbol} = {router.functions.getAmountsOut(amountIn=int(10 ** token0_decimals), path=[token0.address, token1.address]).call()[1]/10 ** token1_decimals} {token1_symbol}"
     )
     print(
         f"  price 1 {token1_symbol} = {router.functions.getAmountsOut(amountIn=int(10 ** token1_decimals), path=[token1.address, token0.address]).call()[1]/10 ** token0_decimals} {token0_symbol}"
     )
+    print("")
 
 factory = w3.eth.contract(abi=uniswap_factory_abi, address=UNI_FACTORY)
 num = factory.functions.allPairsLength().call()
 
 print(f"Now there are {num} pairs")
 print(f"We look {lookback} pairs back")
+if whitelisted:
+    whitelisted_token = w3.eth.contract(abi=erc20_abi, address=whitelisted)
+    whitelisted_token_symbol = whitelisted_token.functions.symbol().call()
+    print(f"and show pairs with whitelisted token {whitelisted_token_symbol} ({whitelisted})")
 
 for i in range(num-lookback, num):
     show_pair(i)

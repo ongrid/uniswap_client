@@ -45,12 +45,40 @@ source venv/bin/activate
 python sniper.py
 ```
 
-# Pair finder
+## New pair watcher
+
 In:
+
+```
+python uniswap_watch_new_pairs.py --lookback 2 --whitelisted 0xd335Bc40C87F88DF0BdBc71880077fE1306BcEB1
+```
+
+Out:
+
+```
+Now there are 30328 pairs
+We look 2 pairs back
+and show pairs with whitelisted token UDO (0xd335Bc40C87F88DF0BdBc71880077fE1306BcEB1)
+
+Pair found:0xD4D0997856558F85508e3a854e33A9FD04A59797 (WETH UDO)
+  Token0: 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2 (WETH)
+  Token1: 0xd335Bc40C87F88DF0BdBc71880077fE1306BcEB1 (UDO)
+  price 1 WETH = 39406.80870991719 UDO
+  price 1 UDO = 2.5124495988698e-05 WETH
+
+Looking for new pairs |
+```
+
+## Pair finder
+
+In:
+
 ```
 python uniswap_find_pair.py 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
 ```
+
 Out:
+
 ```
 Looking for pair: 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39(HEX), 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48(USDC)
 Scanning 48 of 30327 pairs \
