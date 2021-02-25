@@ -44,3 +44,17 @@ Start and see what happens
 source venv/bin/activate
 python sniper.py
 ```
+
+# Pair finder
+In:
+```
+python uniswap_find_pair.py 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+```
+Out:
+```
+Looking for pair: 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39(HEX), 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48(USDC)
+Scanning 48 of 30327 pairs \
+Pair found:0xF6DCdce0ac3001B2f67F750bc64ea5beB37B5824 (HEX USDC)
+  price 1 HEX = 0.008106 USDC
+  price 1 USDC = 122.62429297 HEX
+```
